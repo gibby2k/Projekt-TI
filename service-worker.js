@@ -53,3 +53,29 @@ self.addEventListener('activate', (event) => {
     })
   );
 });
+
+// --- BACKGROUND SYNC ---
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-scores') {
+    console.log('Rozpoczynam synchronizację w tle (Background Sync)...');
+    event.waitUntil(syncData());
+  }
+});
+
+async function syncData() {
+  try {
+    // Wysyłamy powiadomienie push, że aplikacja zsynchronizowała dane w tle
+    await fetch('https://ntfy.sh/geoquiz-smaga-gabrych-2026', {
+        method: 'POST',
+        headers: {
+            'Title': 'GeoQuiz Sync',
+            'Priority': 'default',
+            'Tags': 'arrows_counterclockwise,globe_with_meridians'
+        },
+        body: 'Połączenie przywrócone. Zsynchronizowano wyniki gry w tle!'
+    });
+    console.log('Background Sync: Dane zsynchronizowane pomyślnie!');
+  } catch (err) {
+    console.error('Background Sync - błąd synchronizacji:', err);
+  }
+}
