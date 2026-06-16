@@ -1,6 +1,5 @@
-// --- IMPLEMENTACJA INDEXEDDB ---
 const DB_NAME = 'GeoQuizDB';
-const DB_VERSION = 2; // Zmieniamy wersję, aby zresetować strukturę bazy!
+const DB_VERSION = 2;
 const STORE_NAME = 'scores';
 
 function initDB() {
@@ -9,11 +8,9 @@ function initDB() {
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
-            // Usuwamy starą bazę jeśli istnieje i tworzymy nową
             if (db.objectStoreNames.contains(STORE_NAME)) {
                 db.deleteObjectStore(STORE_NAME);
             }
-            // Tworzymy nową strukturę
             db.createObjectStore(STORE_NAME, { keyPath: 'id' });
         };
 
@@ -22,13 +19,11 @@ function initDB() {
     });
 }
 
-// Funkcja dodająca nowy wynik do historii
 async function saveScoreIndexedDB(score, total) {
     const db = await initDB();
     const transaction = db.transaction(STORE_NAME, 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
     
-    // Zapisujemy każdy wynik jako osobny obiekt z datą
     const record = {
         id: Date.now(), 
         score: score,
@@ -39,20 +34,18 @@ async function saveScoreIndexedDB(score, total) {
     store.add(record);
 }
 
-// Funkcja pobierająca całą historię wyników
 async function getScoreHistory() {
     const db = await initDB();
     return new Promise((resolve) => {
         const transaction = db.transaction(STORE_NAME, 'readonly');
         const store = transaction.objectStore(STORE_NAME);
-        const request = store.getAll(); // Pobieramy WSZYSTKIE rekordy
+        const request = store.getAll();
 
         request.onsuccess = () => resolve(request.result || []);
         request.onerror = () => resolve([]);
     });
 }
 
-// --- POWIADOMIENIA PUSH NTFY.SH ---
 async function sendPushNotification(title, message) {
     try {
         await fetch('https://ntfy.sh/geoquiz-smaga-gabrych-2026', {
@@ -139,9 +132,8 @@ function setNextQuestion() {
 }
 
 function showQuestion(question) {
-    // Animacja przejścia CSS (wymuszenie restartu)
     quizContainer.classList.remove('fade-in-animation');
-    void quizContainer.offsetWidth; // reflow
+    void quizContainer.offsetWidth;
     quizContainer.classList.add('fade-in-animation');
 
     questionElement.innerText = question.question;
@@ -190,25 +182,20 @@ function selectAnswer(e) {
     }
 }
 
-// Wyświetla wyniki i aktualizuje historię
 async function showResults() {
     quizContainer.classList.add('hide');
     resultContainer.classList.remove('hide');
     finalScoreElement.innerText = score;
     totalQuestionsElement.innerText = questions.length;
 
-    // 1. Pobierz dotychczasową historię, żeby sprawdzić poprzedni rekord
     const history = await getScoreHistory();
     let previousBestScore = history.length > 0 ? Math.max(...history.map(h => h.score)) : 0;
 
-    // 2. Zapisz obecną grę do bazy
     await saveScoreIndexedDB(score, questions.length);
 
-    // 3. Pobierz zaktualizowaną historię i wyświetl ją na ekranie
     const updatedHistory = await getScoreHistory();
     displayHistory(updatedHistory);
 
-    // 4. Obsługa najlepszego wyniku i powiadomień
     let currentBestScore = Math.max(previousBestScore, score);
     bestScoreElement.innerText = currentBestScore;
 
@@ -218,7 +205,7 @@ async function showResults() {
     } else {
         sendPushNotification('Koniec gry w GeoQuiz', `Twój wynik to ${score}/${questions.length}.`);
     }
-    // Rejestracja Background Sync do synchronizacji danych po odzyskaniu sieci
+
     if ('serviceWorker' in navigator && 'SyncManager' in window) {
         navigator.serviceWorker.ready.then(registration => {
             registration.sync.register('sync-scores')
@@ -228,11 +215,9 @@ async function showResults() {
     }
 }
 
-// Generuje HTML z historią i dokleja go do ekranu końcowego
 function displayHistory(history) {
     let historyContainer = document.getElementById('history-container');
     
-    // Jeśli kontener jeszcze nie istnieje, tworzymy go w locie
     if (!historyContainer) {
         historyContainer = document.createElement('div');
         historyContainer.id = 'history-container';
@@ -243,7 +228,6 @@ function displayHistory(history) {
     
     let historyHTML = '<h3>Historia gier:</h3><ul style="list-style: none; padding: 0;">';
     
-    // Odwracamy listę (najnowsze gry na górze) i bierzemy tylko 5 ostatnich
     const recentHistory = history.reverse().slice(0, 5);
     
     recentHistory.forEach(item => {
@@ -255,6 +239,7 @@ function displayHistory(history) {
     historyHTML += '</ul>';
     historyContainer.innerHTML = historyHTML;
 }
+
 nextButton.addEventListener('click', () => {
     currentQuestionIndex++;
     setNextQuestion();
@@ -262,12 +247,10 @@ nextButton.addEventListener('click', () => {
 
 restartButton.addEventListener('click', startGame);
 
-// Inicjalizacja gry
 startGame();
 
 console.log("Ładuję nowy plik app.js z integracją API!");
 
-// Rejestracja Service Workera
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js')
     .then((registration) => {
@@ -278,13 +261,10 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Integracja Open-Meteo API (Geolokalizacja)
 if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(async (pos) => {
         try {
             const { latitude, longitude } = pos.coords;
-            
-            // Pobieranie danych z darmowego API
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode,windspeed_10m&timezone=auto`;
             
             const res = await fetch(url);
@@ -302,17 +282,14 @@ if ('geolocation' in navigator) {
     });
 }
 
-// Nasłuchiwanie utraty połączenia z internetem
 window.addEventListener('offline', () => {
     document.getElementById('offline-banner').style.display = 'block';
 });
 
-// Nasłuchiwanie powrotu połączenia z internetem
 window.addEventListener('online', () => {
     document.getElementById('offline-banner').style.display = 'none';
 });
 
-// Sprawdzenie stanu podczas ładowania strony (jeśli aplikacja włączy się już bez internetu)
 if (!navigator.onLine) {
     document.getElementById('offline-banner').style.display = 'block';
 }
