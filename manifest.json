@@ -18,5 +18,21 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "./logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Ekran glowny GeoQuiz na telefonie"
+    },
+    {
+      "src": "./logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Ekran glowny GeoQuiz na komputerze"
+    }
   ]
 }
