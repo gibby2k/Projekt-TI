@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoQuiz PWA</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>🌍 GeoQuiz</h1>
+            <p id="weather" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 15px;">Sprawdzanie pogody...</p>
+        </header>
+        
+        <main id="quiz-container">
+            <div id="score-display">Wynik: <span id="score">0</span></div>
+            <h2 id="question-text">Pytanie pojawi się tutaj...</h2>
+            <div id="answer-buttons" class="btn-grid"></div>
+            <button id="next-btn" class="btn hide">Następne pytanie</button>
+        </main>
+
+        <div id="result-container" class="hide">
+            <h2>Koniec gry!</h2>
+            <p>Twój wynik to: <span id="final-score">0</span> / <span id="total-questions">0</span></p>
+            <p style="margin-top: 10px; font-weight: bold;">Najlepszy wynik: <span id="best-score">0</span></p>
+            <button id="restart-btn" class="btn">Zagraj ponownie</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
