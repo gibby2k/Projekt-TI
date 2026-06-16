@@ -95,3 +95,48 @@ header h1 {
 .hide {
     display: none !important;
 }
+
+/* --- ESTETYCZNY BANER OFFLINE --- */
+.offline-toast {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(135deg, #ff4757, #ff6b81);
+  color: white;
+  text-align: center;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+  z-index: 9999;
+  box-sizing: border-box;
+  animation: slideDown 0.4s ease-out;
+}
+
+/* Animacja wjazdu z góry */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Klasa animująca pojawianie się elementu */
+.fade-in-animation {
+  animation: quizCardAppear 0.4s ease-out forwards;
+}
+
+@keyframes quizCardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
