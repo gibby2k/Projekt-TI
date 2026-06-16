@@ -96,7 +96,6 @@ header h1 {
     display: none !important;
 }
 
-/* --- ESTETYCZNY BANER OFFLINE --- */
 .offline-toast {
   position: fixed;
   top: 0;
@@ -115,7 +114,6 @@ header h1 {
   animation: slideDown 0.4s ease-out;
 }
 
-/* Animacja wjazdu z góry */
 @keyframes slideDown {
   from {
     transform: translateY(-100%);
@@ -125,7 +123,6 @@ header h1 {
   }
 }
 
-/* Klasa animująca pojawianie się elementu */
 .fade-in-animation {
   animation: quizCardAppear 0.4s ease-out forwards;
 }
