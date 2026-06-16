@@ -218,6 +218,14 @@ async function showResults() {
     } else {
         sendPushNotification('Koniec gry w GeoQuiz', `Twój wynik to ${score}/${questions.length}.`);
     }
+    // Rejestracja Background Sync do synchronizacji danych po odzyskaniu sieci
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready.then(registration => {
+            registration.sync.register('sync-scores')
+                .then(() => console.log('Zadanie Background Sync ("sync-scores") zarejestrowane!'))
+                .catch(err => console.error('Błąd rejestracji Background Sync:', err));
+        });
+    }
 }
 
 // Generuje HTML z historią i dokleja go do ekranu końcowego
